@@ -1,7 +1,10 @@
 import 'package:client/core/theme/app_pallete';
+import 'package:client/features/auth/view/pages/signup_page.dart';
 import 'package:client/features/auth/view/widget/custom_field.dart';
 import 'package:client/features/auth/view/widget/gradient_button.dart';
+import 'package:client/repositories/auth_remote_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart' hide State;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -48,18 +51,40 @@ class _LoginPageState extends State<LoginPage> {
                 isObscureText: true,
               ),
               const SizedBox(height: 10),
-              AuthGradientButton(buttonText: 'Sign In', onTap: () {}),
+              AuthGradientButton(
+                buttonText: 'Sign In',
+                onTap: () async {
+                  final res = await AuthRemoteRepository().login(
+                    email: emailController.text,
+                    password: passwordController.text,
+                  );
+
+                  final val = switch (res) {
+                    Left(value: final l) => l,
+                    Right(value: final r) => r,
+                  };
+                  print(val);
+                },
+              ),
               const SizedBox(height: 20),
-              RichText(
-                text: TextSpan(
-                  text: "Don't have an account? ",
-                  style: Theme.of(context).textTheme.titleMedium,
-                  children: const [
-                    TextSpan(
-                      text: 'Sign Up',
-                      style: TextStyle(color: Pallete.gradient2),
-                    ),
-                  ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignupPage()),
+                  );
+                },
+                child: RichText(
+                  text: TextSpan(
+                    text: "Don't have an account? ",
+                    style: Theme.of(context).textTheme.titleMedium,
+                    children: const [
+                      TextSpan(
+                        text: 'Sign Up',
+                        style: TextStyle(color: Pallete.gradient2),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
